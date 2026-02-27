@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Lobby Comm Report</title>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    /* ── Reset & Base ─────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --navy:       #0f2240;
+      --navy-mid:   #1a3557;
+      --blue:       #2563a8;
+      --blue-light: #3b82c4;
+      --accent:     #c8973a;
+      --accent-lt:  #e8b95a;
+      --surface:    #f7f8fa;
+      --card:       #ffffff;
+      --border:     #dde3ec;
+      --text:       #1a2535;
+      --muted:      #6b7a91;
+      --success:    #1a7a4a;
+      --radius:     12px;
+      --shadow:     0 4px 24px rgba(15,34,64,0.10);
+      --shadow-lg:  0 12px 48px rgba(15,34,64,0.16);
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background: var(--surface);
+      color: var(--text);
+      min-height: 100vh;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+
+    /* ── Header ───────────────────────────────────────────── */
+    .header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 60%, #1e4a7a 100%);
+      padding: 36px 24px 32px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 20% 50%, rgba(200,151,58,0.12) 0%, transparent 60%),
+        radial-gradient(ellipse at 80% 20%, rgba(59,130,196,0.15) 0%, transparent 50%);
+      pointer-events: none;
+    }
+
+    .header-badge {
+      display: inline-block;
+      background: rgba(200,151,58,0.18);
+      border: 1px solid rgba(200,151,58,0.35);
+      color: var(--accent-lt);
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 1.8px;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 20px;
+      margin-bottom: 14px;
+    }
+
+    .header h1 {
+      font-family: 'DM Serif Display', serif;
+      font-size: clamp(26px, 5vw, 38px);
+      color: #ffffff;
+      line-height: 1.2;
+      margin-bottom: 8px;
+      position: relative;
+    }
+
+    .header p {
+      color: rgba(255,255,255,0.65);
+      font-size: 14px;
+      font-weight: 300;
+      max-width: 380px;
+      margin: 0 auto;
+    }
+
+    /* ── Main container ───────────────────────────────────── */
+    .container {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 28px 16px 60px;
+    }
+
+    /* ── Step indicator ───────────────────────────────────── */
+    .steps {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0;
+      margin-bottom: 28px;
+    }
+
+    .step {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .step-dot {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--border);
+      color: var(--muted);
+      font-size: 13px;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.3s ease;
+      border: 2px solid transparent;
+    }
+
+    .step-label {
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 500;
+      white-space: nowrap;
+      transition: color 0.3s;
+    }
+
+    .step.active .step-dot {
+      background: var(--navy);
+      color: white;
+      border-color: var(--blue-light);
+      box-shadow: 0 0 0 4px rgba(37,99,168,0.15);
+    }
+
+    .step.active .step-label { color: var(--navy); font-weight: 600; }
+
+    .step.done .step-dot {
+      background: var(--success);
+      color: white;
+      border-color: transparent;
+    }
+
+    .step-line {
+      width: 40px;
+      height: 2px;
+      background: var(--border);
+      margin: 0 4px;
+      margin-bottom: 22px;
+      transition: background 0.3s;
+      flex-shrink: 0;
+    }
+
+    .step-line.done { background: var(--success); }
+
+    /* ── Cards ────────────────────────────────────────────── */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      animation: slideUp 0.35s ease both;
+    }
+
+    @keyframes slideUp {
+      from { opacity: 0; transform: translateY(16px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    .card-header {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+      padding: 18px 24px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .card-header-icon {
+      width: 36px;
+      height: 36px;
+      background: rgba(200,151,58,0.2);
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      flex-shrink: 0;
+    }
+
+    .card-header h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 18px;
+      color: white;
+      font-weight: 400;
+    }
+
+    .card-header p {
+      font-size: 12px;
+      color: rgba(255,255,255,0.55);
+      margin-top: 1px;
+    }
+
+    .card-body { padding: 24px; }
+
+    /* ── Jurisdiction grid ────────────────────────────────── */
+    .jurisdiction-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 400px) {
+      .jurisdiction-grid { grid-template-columns: 1fr; }
+    }
+
+    .jurisdiction-btn {
+      background: var(--surface);
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-align: left;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    .jurisdiction-btn:hover {
+      border-color: var(--blue);
+      background: #eef4fb;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(37,99,168,0.12);
+    }
+
+    .jurisdiction-btn.selected {
+      border-color: var(--navy);
+      background: #e8f0f9;
+      box-shadow: 0 0 0 3px rgba(37,99,168,0.12);
+    }
+
+    .jur-icon {
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .jur-name {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy);
+      line-height: 1.3;
+    }
+
+    /* ── Form fields ──────────────────────────────────────── */
+    .field-group {
+      margin-bottom: 18px;
+    }
+
+    label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      margin-bottom: 6px;
+    }
+
+    input[type="text"],
+    input[type="date"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 11px 14px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--surface);
+      transition: border-color 0.2s, box-shadow 0.2s;
+      -webkit-appearance: none;
+      appearance: none;
+    }
+
+    input[type="text"]:focus,
+    input[type="date"]:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--blue);
+      box-shadow: 0 0 0 3px rgba(37,99,168,0.12);
+      background: white;
+    }
+
+    textarea { resize: vertical; min-height: 80px; }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236b7a91' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      padding-right: 36px;
+      cursor: pointer;
+    }
+
+    /* ── Contact block ────────────────────────────────────── */
+    .contacts-section {
+      margin-top: 4px;
+    }
+
+    .contacts-section-title {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--navy);
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      padding: 14px 0 10px;
+      border-top: 1px solid var(--border);
+      margin-top: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .contact-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 10px;
+      position: relative;
+      animation: slideUp 0.25s ease both;
+    }
+
+    .contact-number {
+      font-size: 11px;
+      font-weight: 700;
+      color: var(--blue);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin-bottom: 12px;
+    }
+
+    .contact-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    @media (max-width: 480px) {
+      .contact-grid { grid-template-columns: 1fr; }
+    }
+
+    .contact-grid .field-group { margin-bottom: 0; }
+
+    .remove-contact {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      background: none;
+      border: none;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 18px;
+      line-height: 1;
+      padding: 2px 6px;
+      border-radius: 4px;
+      transition: all 0.15s;
+    }
+
+    .remove-contact:hover { background: #fee; color: #c0392b; }
+
+    .add-contact-btn {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: none;
+      border: 1.5px dashed var(--blue-light);
+      border-radius: 8px;
+      color: var(--blue);
+      font-family: 'DM Sans', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 16px;
+      cursor: pointer;
+      width: 100%;
+      justify-content: center;
+      transition: all 0.2s;
+      margin-top: 4px;
+    }
+
+    .add-contact-btn:hover {
+      background: #eef4fb;
+      border-color: var(--blue);
+    }
+
+    /* ── Section divider ──────────────────────────────────── */
+    .section-divider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin: 22px 0 18px;
+    }
+
+    .section-divider span {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .section-divider::before,
+    .section-divider::after {
+      content: '';
+      flex: 1;
+      height: 1px;
+      background: var(--border);
+    }
+
+    /* ── Buttons ──────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 13px 24px;
+      border-radius: 8px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      border: none;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-mid) 100%);
+      color: white;
+      box-shadow: 0 4px 14px rgba(15,34,64,0.25);
+      width: 100%;
+      margin-top: 8px;
+      font-size: 16px;
+      padding: 15px 24px;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(15,34,64,0.32);
+    }
+
+    .btn-primary:active { transform: translateY(0); }
+
+    .btn-secondary {
+      background: var(--surface);
+      color: var(--navy);
+      border: 1.5px solid var(--border);
+    }
+
+    .btn-secondary:hover { border-color: var(--blue); background: #eef4fb; }
+
+    .btn-accent {
+      background: linear-gradient(135deg, var(--accent) 0%, #b8842a 100%);
+      color: white;
+      box-shadow: 0 4px 14px rgba(200,151,58,0.3);
+      width: 100%;
+      font-size: 16px;
+      padding: 15px 24px;
+    }
+
+    .btn-accent:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba(200,151,58,0.4);
+    }
+
+    .btn-row {
+      display: flex;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .btn-row .btn { flex: 1; }
+
+    /* ── Preview card ─────────────────────────────────────── */
+    .preview-block {
+      background: var(--navy);
+      border-radius: 10px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    .preview-subject {
+      font-size: 12px;
+      color: rgba(255,255,255,0.5);
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+      margin-bottom: 4px;
+    }
+
+    .preview-subject-value {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--accent-lt);
+      margin-bottom: 16px;
+      word-break: break-word;
+    }
+
+    .preview-body {
+      background: rgba(255,255,255,0.06);
+      border-radius: 8px;
+      padding: 16px;
+      font-family: 'Courier New', monospace;
+      font-size: 12px;
+      color: rgba(255,255,255,0.8);
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-height: 320px;
+      overflow-y: auto;
+      line-height: 1.7;
+    }
+
+    .preview-to {
+      font-size: 12px;
+      color: rgba(255,255,255,0.45);
+      margin-bottom: 14px;
+    }
+
+    .preview-to strong { color: rgba(255,255,255,0.7); }
+
+    /* ── Success state ────────────────────────────────────── */
+    .success-card {
+      text-align: center;
+      padding: 40px 24px;
+    }
+
+    .success-icon {
+      font-size: 52px;
+      margin-bottom: 16px;
+      animation: pop 0.4s cubic-bezier(0.34,1.56,0.64,1) both;
+    }
+
+    @keyframes pop {
+      from { transform: scale(0.5); opacity: 0; }
+      to   { transform: scale(1);   opacity: 1; }
+    }
+
+    .success-card h2 {
+      font-family: 'DM Serif Display', serif;
+      font-size: 24px;
+      color: var(--navy);
+      margin-bottom: 8px;
+    }
+
+    .success-card p {
+      color: var(--muted);
+      font-size: 14px;
+      max-width: 320px;
+      margin: 0 auto 24px;
+    }
+
+    /* ── Utility ──────────────────────────────────────────── */
+    .hidden { display: none !important; }
+
+    .required-star { color: #c0392b; margin-left: 2px; }
+
+    .field-hint {
+      font-size: 11px;
+      color: var(--muted);
+      margin-top: 4px;
+      font-weight: 400;
+      text-transform: none;
+      letter-spacing: 0;
+    }
+
+    .error-msg {
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      color: #b91c1c;
+      border-radius: 8px;
+      padding: 12px 16px;
+      font-size: 13px;
+      margin-bottom: 16px;
+      display: none;
+    }
+
+    /* ── Scrollbar ────────────────────────────────────────── */
+    .preview-body::-webkit-scrollbar { width: 4px; }
+    .preview-body::-webkit-scrollbar-track { background: transparent; }
+    .preview-body::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.2); border-radius: 2px; }
+
+    /* ── Mobile tweaks ────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .card-body { padding: 18px 16px; }
+      .btn-row { flex-direction: column; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── HEADER ─────────────────────────────────────────────── -->
+<div class="header">
+  <div class="header-badge">Compliance Tool</div>
+  <h1>Lobby Comm Report</h1>
+  <p>File a lobbying communication report to your compliance team</p>
+</div>
+
+<!-- ── MAIN ───────────────────────────────────────────────── -->
+<div class="container">
+
+  <!-- Step indicator -->
+  <div class="steps" id="steps">
+    <div class="step active" id="step-ind-1">
+      <div class="step-dot">1</div>
+      <div class="step-label">Jurisdiction</div>
+    </div>
+    <div class="step-line" id="line-1"></div>
+    <div class="step active" id="step-ind-2">
+      <div class="step-dot">2</div>
+      <div class="step-label">Details</div>
+    </div>
+    <div class="step-line" id="line-2"></div>
+    <div class="step" id="step-ind-3">
+      <div class="step-dot">3</div>
+      <div class="step-label">Review</div>
+    </div>
+    <div class="step-line" id="line-3"></div>
+    <div class="step" id="step-ind-4">
+      <div class="step-dot">4</div>
+      <div class="step-label">Send</div>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 1: Jurisdiction ─────────────────────────── -->
+  <div id="screen-jurisdiction" class="card">
+    <div class="card-header">
+      <div class="card-header-icon">🏛</div>
+      <div>
+        <h2>Select Jurisdiction</h2>
+        <p>Choose the jurisdiction this communication falls under</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="jurisdiction-grid">
+        <button class="jurisdiction-btn" onclick="selectJurisdiction('Federal')" id="jbtn-Federal">
+          <span class="jur-icon">🍁</span>
+          <span class="jur-name">Federal</span>
+        </button>
+        <button class="jurisdiction-btn" onclick="selectJurisdiction('British Columbia')" id="jbtn-British Columbia">
+          <span class="jur-icon">🏔</span>
+          <span class="jur-name">British Columbia</span>
+        </button>
+        <button class="jurisdiction-btn" onclick="selectJurisdiction('City of Ottawa')" id="jbtn-City of Ottawa">
+          <span class="jur-icon">🏙</span>
+          <span class="jur-name">City of Ottawa</span>
+        </button>
+        <button class="jurisdiction-btn" onclick="selectJurisdiction('City of Toronto')" id="jbtn-City of Toronto">
+          <span class="jur-icon">🌆</span>
+          <span class="jur-name">City of Toronto</span>
+        </button>
+        <button class="jurisdiction-btn" onclick="selectJurisdiction('Saskatchewan')" id="jbtn-Saskatchewan">
+          <span class="jur-icon">🌾</span>
+          <span class="jur-name">Saskatchewan</span>
+        </button>
+        <button class="jurisdiction-btn" onclick="selectJurisdiction('Manitoba')" id="jbtn-Manitoba">
+          <span class="jur-icon">🦌</span>
+          <span class="jur-name">Manitoba</span>
+        </button>
+      </div>
+      <button class="btn btn-primary hidden" id="next-to-form" onclick="goToForm()">
+        Continue →
+      </button>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 2: Form ─────────────────────────────────── -->
+  <div id="screen-form" class="card hidden">
+    <div class="card-header">
+      <div class="card-header-icon">📋</div>
+      <div>
+        <h2 id="form-title">Communication Details</h2>
+        <p id="form-subtitle">Fill in all required fields</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <div id="error-msg" class="error-msg"></div>
+      <div id="form-fields"></div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goBack('screen-jurisdiction', 1)">← Back</button>
+        <button class="btn btn-primary" onclick="goToPreview()" style="margin-top:0">Review →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 3: Preview ──────────────────────────────── -->
+  <div id="screen-preview" class="card hidden">
+    <div class="card-header">
+      <div class="card-header-icon">👁</div>
+      <div>
+        <h2>Review Before Sending</h2>
+        <p>Check everything looks correct</p>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="preview-block">
+        <div class="preview-to">To: <strong>compliance@strategycorp.com</strong></div>
+        <div class="preview-subject">Subject</div>
+        <div class="preview-subject-value" id="preview-subject"></div>
+        <div class="preview-body" id="preview-body"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-secondary" onclick="goBack('screen-form', 2)">← Edit</button>
+        <button class="btn btn-accent" onclick="sendEmail()">✉ Open in Email App</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── SCREEN 4: Sent ─────────────────────────────────── -->
+  <div id="screen-sent" class="card hidden">
+    <div class="card-body success-card">
+      <div class="success-icon">✅</div>
+      <h2>Report Ready to Send</h2>
+      <p>Your email client has opened with the report pre-filled. Tap Send to file it with the compliance team.</p>
+      <button class="btn btn-primary" onclick="startOver()" style="max-width:280px;margin:0 auto;">
+        + File Another Report
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+// ── CONFIG ───────────────────────────────────────────────────
+const COMPLIANCE_EMAIL = "compliance@strategycorp.com";
+
+// ── JURISDICTION FIELD DEFINITIONS ───────────────────────────
+// isClient / isDate — pulled into subject line
+// isCommType        — value watched for contact section label
+// contactRole       — true for Toronto (adds role field per contact)
+
+const JURISDICTIONS = {
+  "Federal": {
+    contactRole: false,
+    fields: [
+      { id: "date",       label: "Date",                                                          type: "date",     isDate: true,   required: true  },
+      { id: "client",     label: "Client",                                                        type: "text",     isClient: true, required: true  },
+      { id: "comm_type",  label: "Communication Type",                                            type: "commtype", isCommType: true, required: true },
+      { id: "dept",       label: "Official's Department or Agency",                               type: "text",     required: true  },
+      { id: "subject_m",  label: "Subject Matter(s) of the Meeting (from list in registration)",  type: "textarea", required: true  },
+    ]
+  },
+  "British Columbia": {
+    contactRole: false,
+    fields: [
+      { id: "date",       label: "Date",                                                          type: "date",     isDate: true,   required: true  },
+      { id: "client",     label: "Client",                                                        type: "text",     isClient: true, required: true  },
+      { id: "comm_type",  label: "Communication Type",                                            type: "commtype", isCommType: true, required: true },
+      { id: "dept",       label: "Official's Department or Agency",                               type: "text",     required: true  },
+      { id: "subject_m",  label: "Subject Matter(s) of the Meeting (from list in registration)",  type: "textarea", required: true  },
+      { id: "bc_meeting", label: "(BC Only) Was this communication to request a meeting for the client?", type: "yesno", required: true },
+    ]
+  },
+  "City of Ottawa": {
+    contactRole: false,
+    fields: [
+      { id: "date",       label: "Date",                                                          type: "date",     isDate: true,   required: true  },
+      { id: "client",     label: "Client",                                                        type: "text",     isClient: true, required: true  },
+      { id: "comm_type",  label: "Communication Method",                                          type: "commtype", isCommType: true, required: true },
+    ]
+  },
+  "City of Toronto": {
+    contactRole: true,
+    fields: [
+      { id: "client",     label: "Client",                                                        type: "text",     isClient: true, required: true  },
+      { id: "date",       label: "Date of the Communication",                                     type: "date",     isDate: true,   required: true  },
+      { id: "comm_type",  label: "Type of Communication",                                         type: "commtype", isCommType: true, required: true },
+      { id: "tor_mtg",    label: "Was this communication to request a meeting for the client?",   type: "yesno",    required: true  },
+    ]
+  },
+  "Saskatchewan": {
+    contactRole: false,
+    fields: [
+      { id: "date",       label: "Date",                                                          type: "date",     isDate: true,   required: true  },
+      { id: "client",     label: "Client",                                                        type: "text",     isClient: true, required: true  },
+      { id: "comm_type",  label: "Communication Type",                                            type: "commtype", isCommType: true, required: true },
+      { id: "gov_inst",   label: "Government Institution / Department",                           type: "text",     required: true  },
+      { id: "purpose",    label: "Subject or Purpose of Communication",                           type: "textarea", required: true  },
+      { id: "targets",    label: "Add this official to the registration targets list?",           type: "yesno",    required: true  },
+    ]
+  },
+  "Manitoba": {
+    contactRole: false,
+    fields: [
+      { id: "date",       label: "Date",                                                          type: "date",     isDate: true,   required: true  },
+      { id: "client",     label: "Client",                                                        type: "text",     isClient: true, required: true  },
+      { id: "comm_type",  label: "Communication Type",                                            type: "commtype", isCommType: true, required: true },
+      { id: "gov_inst",   label: "Government Institution / Department",                           type: "text",     required: true  },
+      { id: "purpose",    label: "Subject or Purpose of Communication",                           type: "textarea", required: true  },
+      { id: "targets",    label: "Add this official to the registration targets list?",           type: "yesno",    required: true  },
+    ]
+  },
+};
+
+// ── STATE ─────────────────────────────────────────────────────
+let selectedJurisdiction = null;
+let contactCount = 1;
+
+// ── HELPERS ──────────────────────────────────────────────────
+
+function show(id)   { document.getElementById(id).classList.remove('hidden'); }
+function hide(id)   { document.getElementById(id).classList.add('hidden'); }
+function val(id)    { const el = document.getElementById(id); return el ? el.value.trim() : ''; }
+
+function setStep(n) {
+  [1,2,3,4].forEach(i => {
+    const s = document.getElementById('step-ind-' + i);
+    const l = document.getElementById('line-' + i);
+    s.classList.remove('active','done');
+    if (l) l.classList.remove('done');
+    if (i < n)  { s.classList.add('done'); if(l) l.classList.add('done'); }
+    if (i === n){ s.classList.add('active'); }
+  });
+}
+
+function formatDateDisplay(val) {
+  if (!val) return '';
+  const [y, m, d] = val.split('-');
+  const months = ["January","February","March","April","May","June",
+                  "July","August","September","October","November","December"];
+  return months[parseInt(m,10)-1] + ' ' + parseInt(d,10) + ', ' + y;
+}
+
+// ── STEP 1: JURISDICTION ──────────────────────────────────────
+
+function selectJurisdiction(name) {
+  selectedJurisdiction = name;
+  document.querySelectorAll('.jurisdiction-btn').forEach(b => b.classList.remove('selected'));
+  document.getElementById('jbtn-' + name).classList.add('selected');
+  show('next-to-form');
+}
+
+function goToForm() {
+  if (!selectedJurisdiction) return;
+  buildForm(selectedJurisdiction);
+  hide('screen-jurisdiction');
+  show('screen-form');
+  setStep(2);
+  window.scrollTo(0,0);
+}
+
+// ── STEP 2: FORM BUILDER ──────────────────────────────────────
+
+function buildForm(jur) {
+  const def = JURISDICTIONS[jur];
+  document.getElementById('form-title').textContent = jur;
+  document.getElementById('form-subtitle').textContent = 'Fill in the details for this communication';
+
+  let html = '';
+
+  // Standard fields
+  def.fields.forEach(f => {
+    html += '<div class="field-group">';
+    html += '<label for="f_' + f.id + '">' + f.label + (f.required ? '<span class="required-star">*</span>' : '') + '</label>';
+
+    if (f.type === 'date') {
+      html += '<input type="date" id="f_' + f.id + '" />';
+    } else if (f.type === 'textarea') {
+      html += '<textarea id="f_' + f.id + '" rows="3" placeholder="Enter details..."></textarea>';
+    } else if (f.type === 'yesno') {
+      html += '<select id="f_' + f.id + '"><option value="">Select...</option><option>Yes</option><option>No</option><option>N/A</option></select>';
+    } else if (f.type === 'commtype') {
+      html += '<select id="f_' + f.id + '">'
+            + '<option value="">Select type...</option>'
+            + '<option>Meeting</option>'
+            + '<option>Phone call</option>'
+            + '<option>Email</option>'
+            + '<option>Video call</option>'
+            + '<option>Other</option>'
+            + '</select>';
+    } else {
+      html += '<input type="text" id="f_' + f.id + '" placeholder="Enter ' + f.label.toLowerCase() + '..." />';
+    }
+    html += '</div>';
+  });
+
+  // Contacts section — always shown
+  html += '<div class="section-divider"><span>Contacts</span></div>';
+  html += '<div class="contacts-section">';
+  html += '<div id="contacts-container"></div>';
+  html += '<button type="button" class="add-contact-btn" onclick="addContact()">+ Add Another Contact</button>';
+  html += '</div>';
+
+  document.getElementById('form-fields').innerHTML = html;
+
+  // Reset and add first contact
+  contactCount = 0;
+  addContact();
+}
+
+function addContact() {
+  contactCount++;
+  const jur = JURISDICTIONS[selectedJurisdiction];
+  const n   = contactCount;
+  const container = document.getElementById('contacts-container');
+
+  const div = document.createElement('div');
+  div.className = 'contact-card';
+  div.id = 'contact-card-' + n;
+
+  let inner = '<div class="contact-number">Contact ' + n + '</div>';
+  if (n > 1) {
+    inner += '<button class="remove-contact" onclick="removeContact(' + n + ')" title="Remove">✕</button>';
+  }
+  inner += '<div class="contact-grid">';
+  inner += '<div class="field-group"><label for="c_name_' + n + '">Full Name<span class="required-star">*</span></label><input type="text" id="c_name_' + n + '" placeholder="Full name..." /></div>';
+  inner += '<div class="field-group"><label for="c_title_' + n + '">Title<span class="required-star">*</span></label><input type="text" id="c_title_' + n + '" placeholder="Title..." /></div>';
+  if (jur.contactRole) {
+    inner += '<div class="field-group" style="grid-column:1/-1"><label for="c_role_' + n + '">Role</label><select id="c_role_' + n + '"><option value="">Select role...</option><option>City Official</option><option>Employee</option><option>Other</option></select></div>';
+  }
+  inner += '</div>';
+
+  div.innerHTML = inner;
+  container.appendChild(div);
+}
+
+function removeContact(n) {
+  const el = document.getElementById('contact-card-' + n);
+  if (el) el.remove();
+}
+
+function getContacts() {
+  const jur      = JURISDICTIONS[selectedJurisdiction];
+  const contacts = [];
+  for (let i = 1; i <= contactCount; i++) {
+    const nameEl = document.getElementById('c_name_' + i);
+    if (!nameEl) continue;
+    const name  = nameEl.value.trim();
+    const title = (document.getElementById('c_title_' + i) || {}).value || '';
+    const role  = jur.contactRole ? ((document.getElementById('c_role_' + i) || {}).value || '') : null;
+    if (name || title) {
+      contacts.push({ name, title: title.trim(), role });
+    }
+  }
+  return contacts;
+}
+
+// ── STEP 3: PREVIEW ──────────────────────────────────────────
+
+function goToPreview() {
+  const errEl = document.getElementById('error-msg');
+  errEl.style.display = 'none';
+
+  const def    = JURISDICTIONS[selectedJurisdiction];
+  const errors = [];
+
+  // Validate standard fields
+  def.fields.forEach(f => {
+    if (f.required && !val('f_' + f.id)) {
+      errors.push(f.label);
+    }
+  });
+
+  // Validate contacts (at least one with a name)
+  const contacts = getContacts();
+  if (contacts.length === 0) {
+    errors.push('At least one contact name');
+  } else {
+    contacts.forEach((c, i) => {
+      if (!c.name) errors.push('Contact ' + (i+1) + ' name');
+    });
+  }
+
+  if (errors.length) {
+    errEl.textContent = 'Please fill in: ' + errors.join(', ');
+    errEl.style.display = 'block';
+    errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    return;
+  }
+
+  // Build subject
+  const clientField = def.fields.find(f => f.isClient);
+  const dateField   = def.fields.find(f => f.isDate);
+  const clientVal   = clientField ? val('f_' + clientField.id) : '';
+  const dateVal     = dateField   ? formatDateDisplay(val('f_' + dateField.id)) : '';
+
+  let subject = selectedJurisdiction + ' lobby registration';
+  if (clientVal) subject += ' | ' + clientVal;
+  if (dateVal)   subject += ' | ' + dateVal;
+
+  // Build body
+  const THICK = '========================================';
+  const THIN  = '----------------------------------------';
+  const lines = [];
+
+  lines.push(THICK);
+  lines.push('LOBBYING COMMUNICATION REPORT');
+  lines.push('Jurisdiction: ' + selectedJurisdiction);
+  lines.push(THICK);
+  lines.push('');
+
+  def.fields.forEach(f => {
+    let v = val('f_' + f.id);
+    if (f.type === 'date') v = formatDateDisplay(v);
+    lines.push(f.label.toUpperCase());
+    lines.push(THIN);
+    lines.push(v || '—');
+    lines.push('');
+  });
+
+  // Contacts
+  const plural = contacts.length === 1 ? 'PERSON' : 'PEOPLE';
+  lines.push(THICK);
+  lines.push('CONTACTS (' + contacts.length + ' ' + plural + ')');
+  lines.push(THICK);
+  lines.push('');
+
+  contacts.forEach((c, i) => {
+    const num = contacts.length === 1 ? '' : ' ' + (i + 1);
+    lines.push('CONTACT' + num);
+    lines.push(THIN);
+    lines.push('Name:   ' + (c.name  || '—'));
+    lines.push('Title:  ' + (c.title || '—'));
+    if (c.role !== null) lines.push('Role:   ' + (c.role || '—'));
+    lines.push('');
+  });
+
+  lines.push(THICK);
+  lines.push('Filed: ' + new Date().toLocaleString());
+  lines.push(THICK);
+
+  const body = lines.join('\n');
+
+  document.getElementById('preview-subject').textContent = subject;
+  document.getElementById('preview-body').textContent    = body;
+
+  // Store for send step
+  window._emailSubject = subject;
+  window._emailBody    = body;
+
+  hide('screen-form');
+  show('screen-preview');
+  setStep(3);
+  window.scrollTo(0,0);
+}
+
+// ── STEP 4: SEND ─────────────────────────────────────────────
+
+function sendEmail() {
+  const subject = encodeURIComponent(window._emailSubject || '');
+  const body    = encodeURIComponent(window._emailBody    || '');
+  const to      = encodeURIComponent(COMPLIANCE_EMAIL);
+
+  const mailto  = 'mailto:' + COMPLIANCE_EMAIL
+                + '?subject=' + subject
+                + '&body='    + body;
+
+  window.location.href = mailto;
+
+  // Show success screen after brief delay
+  setTimeout(() => {
+    hide('screen-preview');
+    show('screen-sent');
+    setStep(4);
+    window.scrollTo(0,0);
+  }, 800);
+}
+
+// ── NAVIGATION ────────────────────────────────────────────────
+
+function goBack(screenId, stepNum) {
+  ['screen-jurisdiction','screen-form','screen-preview','screen-sent']
+    .forEach(id => hide(id));
+  show(screenId);
+  setStep(stepNum);
+  window.scrollTo(0,0);
+}
+
+function startOver() {
+  selectedJurisdiction = null;
+  contactCount = 1;
+  document.querySelectorAll('.jurisdiction-btn').forEach(b => b.classList.remove('selected'));
+  hide('next-to-form');
+  ['screen-form','screen-preview','screen-sent'].forEach(id => hide(id));
+  show('screen-jurisdiction');
+  setStep(1);
+  window.scrollTo(0,0);
+}
+
+// ── INIT ──────────────────────────────────────────────────────
+setStep(1);
+</script>
+</body>
+</html>
