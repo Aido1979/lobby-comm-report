@@ -132,6 +132,19 @@
   .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: var(--navy); color: var(--white); padding: 12px 20px; border-radius: 30px; font-size: 14px; font-weight: 500; z-index: 1000; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1); white-space: nowrap; box-shadow: var(--shadow-lg); pointer-events: none; }
   .toast.show { transform: translateX(-50%) translateY(0); }
 
+
+  /* ── Per-contact extra rows ── */
+  .contact-extra-row { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--cream-dark); }
+
+  /* Government institution text input row */
+  .govt-inst-row { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--cream-dark); }
+
+  /* Targets toggle button */
+  .targets-toggle { display: inline-flex; align-items: center; gap: 7px; margin-top: 10px; padding: 8px 16px; border: 1.5px solid var(--cream-dark); border-radius: 20px; cursor: pointer; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; color: var(--text-mid); background: var(--white); transition: var(--transition); user-select: none; }
+  .targets-toggle:hover { border-color: var(--navy); color: var(--navy); }
+  .targets-toggle.active { background: var(--navy); border-color: var(--navy); color: var(--white); }
+  .targets-toggle .toggle-icon { font-size: 14px; transition: var(--transition); }
+  .targets-toggle .toggle-text { transition: var(--transition); }
   @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
   .hidden { display: none !important; }
   .required-star { color: var(--gold); margin-left: 2px; }
@@ -264,7 +277,9 @@ var JURISDICTIONS = [
     extraFields: [
       { id: "dept",       label: "Official's Department or Agency",                              type: "text",     required: true, placeholder: "e.g. Ministry of Finance" },
       { id: "subject",    label: "Subject Matter(s) of the Meeting (from list in registration)", type: "textarea", required: true, placeholder: "As listed in your registration" },
-      { id: "bc_meeting", label: "(BC only) Was this communication to request a meeting for the client?", type: "select", required: true, options: ["Yes","No"] }
+    ],
+    contactPills: [
+      { id: "meeting_request", label: "Was this communication to request a meeting for the client?", options: ["Yes","No"] }
     ]
   },
   {
@@ -276,26 +291,28 @@ var JURISDICTIONS = [
     id: "toronto", name: "City of Toronto", flag: "🌆",
     contactType: "toronto",
     extraFields: [
-      { id: "tor_meeting", label: "Was this communication to request a meeting for the client?", type: "select", required: true, options: ["Yes","No","N/A"] }
+    ],
+    contactPills: [
+      { id: "meeting_request", label: "Was this communication to request a meeting for the client?", options: ["Yes","No","N/A"] }
     ]
   },
   {
     id: "sk", name: "Saskatchewan", flag: "🌾",
     contactType: "standard",
     extraFields: [
-      { id: "govt_inst", label: "Government Institution / Department", type: "text",     required: true, placeholder: "e.g. Ministry of Agriculture" },
-      { id: "purpose",   label: "Subject or Purpose of Communication", type: "textarea", required: true, placeholder: "Brief description" },
-      { id: "targets",   label: "Add This Official to the Registration Targets List?",   type: "select", required: true, options: ["Yes","No"] }
-    ]
+      { id: "purpose", label: "Subject or Purpose of Communication", type: "textarea", required: true, placeholder: "Brief description" }
+    ],
+    contactHasGovtInst: true,
+    contactHasTargets: true
   },
   {
     id: "mb", name: "Manitoba", flag: "🦬",
     contactType: "standard",
     extraFields: [
-      { id: "govt_inst", label: "Government Institution / Department", type: "text",     required: true, placeholder: "e.g. Department of Finance" },
-      { id: "purpose",   label: "Subject or Purpose of Communication", type: "textarea", required: true, placeholder: "Brief description" },
-      { id: "targets",   label: "Add This Official to the Registration Targets List?",   type: "select", required: true, options: ["Yes","No"] }
-    ]
+      { id: "purpose", label: "Subject or Purpose of Communication", type: "textarea", required: true, placeholder: "Brief description" }
+    ],
+    contactHasGovtInst: true,
+    contactHasTargets: true
   }
 ];
 
@@ -423,7 +440,24 @@ function renderContacts() {
       dept:    (document.getElementById('contact_dept_'    + s) || {}).value || '',
       branch:  (document.getElementById('contact_branch_'  + s) || {}).value || '',
       section: (document.getElementById('contact_section_' + s) || {}).value || '',
-      checked: checked
+      checked: checked,
+      govt: (function() {
+        var el = document.getElementById('contact_govt_' + s);
+        return el ? el.value : '';
+      })(),
+      targets: (function() {
+        var el = document.getElementById('targets_toggle_' + s);
+        return el ? el.dataset.active === 'true' : false;
+      })(),
+      pillValues: (function() {
+        var pv = {};
+        var cp = state.jurisdiction ? (state.jurisdiction.contactPills || []) : [];
+        cp.forEach(function(pill) {
+          var sel = document.querySelector('input[name="pill_' + s + '_' + pill.id + '"]:checked');
+          pv[pill.id] = sel ? sel.value : '';
+        });
+        return pv;
+      })()
     });
   }
 
@@ -485,6 +519,68 @@ function renderContacts() {
 
     commRow.appendChild(chipGroup);
     card.appendChild(commRow);
+
+    // Government Institution / Department — SK and MB only, per contact
+    if (state.jurisdiction.contactHasGovtInst) {
+      var govtRow = document.createElement('div');
+      govtRow.className = 'govt-inst-row';
+      var govtField = mkInput('contact_govt_' + i, 'Government Institution / Department', true);
+      govtField.classList.add('full');
+      if (sv.govt) govtField.querySelector('input').value = sv.govt;
+      govtRow.appendChild(govtField);
+      card.appendChild(govtRow);
+    }
+
+    // BC / Toronto: meeting request Yes/No/N/A pills
+    var contactPills = state.jurisdiction.contactPills || [];
+    contactPills.forEach(function(pill) {
+      var savedVal = (sv.pillValues && sv.pillValues[pill.id]) || '';
+      var row = document.createElement('div');
+      row.className = 'contact-extra-row';
+      var lbl = document.createElement('span');
+      lbl.className = 'comm-type-row-label';
+      lbl.textContent = pill.label;
+      row.appendChild(lbl);
+      var chips = document.createElement('div');
+      chips.className = 'chip-group';
+      pill.options.forEach(function(opt) {
+        var chipId = 'pill_' + i + '_' + pill.id + '_' + opt;
+        var chip = document.createElement('label');
+        chip.className = 'comm-chip' + (savedVal === opt ? ' checked' : '');
+        chip.id = chipId;
+        chip.innerHTML =
+          '<input type="radio" name="pill_' + i + '_' + pill.id + '" value="' + opt + '"' + (savedVal === opt ? ' checked' : '') + '>' +
+          '<span class="chip-dot"></span>' +
+          opt;
+        chip.querySelector('input').addEventListener('change', function() {
+          chips.querySelectorAll('.comm-chip').forEach(function(c) { c.classList.remove('checked'); });
+          chip.classList.add('checked');
+        });
+        chips.appendChild(chip);
+      });
+      row.appendChild(chips);
+      card.appendChild(row);
+    });
+
+    // Targets toggle — SK and MB only
+    if (state.jurisdiction.contactHasTargets) {
+      var isActive = sv.targets || false;
+      var toggle = document.createElement('button');
+      toggle.type = 'button';
+      toggle.className = 'targets-toggle' + (isActive ? ' active' : '');
+      toggle.id = 'targets_toggle_' + i;
+      toggle.dataset.active = isActive ? 'true' : 'false';
+      toggle.innerHTML = '<span class="toggle-icon">' + (isActive ? '✓' : '+') + '</span><span class="toggle-text">' + (isActive ? 'Added to targets list' : 'Add to targets list') + '</span>';
+      toggle.addEventListener('click', function() {
+        var currently = toggle.dataset.active === 'true';
+        toggle.dataset.active = currently ? 'false' : 'true';
+        toggle.classList.toggle('active', !currently);
+        toggle.querySelector('.toggle-icon').textContent = currently ? '+' : '✓';
+        toggle.querySelector('.toggle-text').textContent = currently ? 'Add to targets list' : 'Added to targets list';
+      });
+      card.appendChild(toggle);
+    }
+
     list.appendChild(card);
   }
 }
@@ -607,6 +703,26 @@ function buildEmailContent() {
       if (branchEl  && branchEl.value.trim())  lines.push('Branch:     ' + branchEl.value.trim());
       if (sectionEl && sectionEl.value.trim()) lines.push('Section:    ' + sectionEl.value.trim());
     }
+    // Govt institution (SK/MB)
+    if (j.contactHasGovtInst) {
+      var govtEl = document.getElementById('contact_govt_' + i);
+      if (govtEl && govtEl.value.trim()) lines.push('Institution:  ' + govtEl.value.trim());
+    }
+
+    // Meeting request pills (BC/Toronto)
+    var contactPills2 = j.contactPills || [];
+    contactPills2.forEach(function(pill) {
+      var sel = document.querySelector('input[name="pill_' + i + '_' + pill.id + '"]:checked');
+      var val = sel ? sel.value : '—';
+      lines.push('Meeting req:  ' + val);
+    });
+
+    // Targets toggle (SK/MB)
+    if (j.contactHasTargets) {
+      var tog = document.getElementById('targets_toggle_' + i);
+      if (tog) if (tog.dataset.active === 'true') lines.push('Targets list: YES — add this official');
+    }
+
     lines.push('');
   }
 
