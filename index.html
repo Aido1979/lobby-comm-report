@@ -60,12 +60,13 @@
 
   .field-group { display: flex; flex-direction: column; gap: 18px; }
   .field { display: flex; flex-direction: column; gap: 6px; }
-  .field label { font-size: 12px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--navy-mid); }
+  .field label.field-label { font-size: 12px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--navy-mid); }
   .field input, .field select, .field textarea { padding: 11px 14px; border: 1.5px solid var(--cream-dark); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 15px; color: var(--text); background: var(--cream); transition: var(--transition); outline: none; width: 100%; -webkit-appearance: none; }
   .field input:focus, .field select:focus, .field textarea:focus { border-color: var(--blue); background: var(--white); box-shadow: 0 0 0 3px rgba(37,99,168,0.10); }
   .field textarea { resize: vertical; min-height: 80px; line-height: 1.5; }
   .field select { background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%234a5568' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E"); background-repeat: no-repeat; background-position: right 14px center; padding-right: 36px; cursor: pointer; }
 
+  /* ── Contact cards ── */
   .contacts-section { margin-top: 4px; }
   .contacts-label { font-size: 12px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--navy-mid); display: block; margin-bottom: 14px; }
   .contact-count-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
@@ -74,13 +75,25 @@
   .count-btn { width: 36px; height: 36px; background: var(--cream); border: none; cursor: pointer; font-size: 18px; color: var(--navy); transition: var(--transition); display: flex; align-items: center; justify-content: center; }
   .count-btn:hover { background: var(--cream-dark); }
   .count-display { width: 36px; text-align: center; font-size: 15px; font-weight: 600; color: var(--navy); border-left: 1.5px solid var(--cream-dark); border-right: 1.5px solid var(--cream-dark); height: 36px; display: flex; align-items: center; justify-content: center; }
+
   .contact-card { background: var(--cream); border-radius: 8px; padding: 16px; margin-bottom: 10px; border: 1.5px solid var(--cream-dark); animation: fadeUp 0.25s ease forwards; }
-  .contact-num { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); margin-bottom: 10px; }
+  .contact-num { font-size: 11px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; color: var(--gold); margin-bottom: 12px; }
   .contact-fields { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-  .contact-fields .field label { font-size: 11px; }
+  .contact-fields .field label.field-label { font-size: 11px; }
   .contact-fields .field input { font-size: 14px; padding: 9px 12px; }
   .contact-fields .field.full { grid-column: 1 / -1; }
   @media (max-width: 480px) { .contact-fields { grid-template-columns: 1fr; } }
+
+  /* ── Comm type pills per contact ── */
+  .comm-type-row { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--cream-dark); }
+  .comm-type-row-label { font-size: 11px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--navy-mid); margin-bottom: 8px; display: block; }
+  .chip-group { display: flex; flex-wrap: wrap; gap: 6px; }
+  .comm-chip { display: inline-flex; align-items: center; gap: 5px; padding: 6px 12px; border: 1.5px solid var(--cream-dark); border-radius: 20px; cursor: pointer; transition: var(--transition); background: var(--white); user-select: none; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 500; color: var(--text-mid); }
+  .comm-chip input[type="checkbox"] { display: none; }
+  .comm-chip .chip-dot { width: 7px; height: 7px; border-radius: 50%; border: 1.5px solid var(--text-light); transition: var(--transition); flex-shrink: 0; }
+  .comm-chip:hover { border-color: var(--navy); }
+  .comm-chip.checked { border-color: var(--navy); background: var(--navy); color: var(--white); }
+  .comm-chip.checked .chip-dot { background: var(--gold); border-color: var(--gold); }
 
   .section-divider { height: 1px; background: var(--cream-dark); margin: 22px 0; }
 
@@ -91,22 +104,22 @@
   .btn-secondary { background: var(--cream-dark); color: var(--text-mid); flex-shrink: 0; }
   .btn-secondary:hover { background: #ddd8cf; }
 
-  /* The send link — a plain <a> tag, styled as a button */
+  /* Send link */
   .send-link-wrap { margin-top: 16px; }
-  a.send-link {
-    display: flex; align-items: center; justify-content: center; gap: 10px;
-    width: 100%; padding: 16px 24px;
-    background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%);
-    color: var(--navy); font-family: 'DM Sans', sans-serif;
-    font-size: 16px; font-weight: 700;
-    border-radius: 8px; text-decoration: none;
-    box-shadow: 0 4px 16px rgba(201,168,76,0.35);
-    transition: var(--transition);
-    cursor: pointer;
-  }
+  a.send-link { display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 16px 24px; background: linear-gradient(135deg, var(--gold) 0%, var(--gold-light) 100%); color: var(--navy); font-family: 'DM Sans', sans-serif; font-size: 16px; font-weight: 700; border-radius: 8px; text-decoration: none; box-shadow: 0 4px 16px rgba(201,168,76,0.35); transition: var(--transition); cursor: pointer; }
   a.send-link:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(201,168,76,0.45); }
-  a.send-link:active { transform: translateY(0); }
-  .send-link-note { font-size: 12px; color: var(--text-light); text-align: center; margin-top: 8px; line-height: 1.5; }
+
+  /* Outlook tip */
+  .outlook-tip { margin-top: 12px; border: 1.5px solid var(--cream-dark); border-radius: 8px; overflow: hidden; }
+  .outlook-tip-toggle { width: 100%; background: var(--cream); border: none; padding: 11px 16px; font-family: 'DM Sans', sans-serif; font-size: 12px; font-weight: 600; color: var(--text-mid); cursor: pointer; display: flex; align-items: center; justify-content: space-between; gap: 8px; text-align: left; }
+  .outlook-tip-toggle:hover { background: var(--cream-dark); }
+  .outlook-tip-toggle .tip-arrow { font-size: 10px; transition: transform 0.2s; flex-shrink: 0; }
+  .outlook-tip-toggle.open .tip-arrow { transform: rotate(180deg); }
+  .outlook-tip-body { display: none; padding: 14px 16px; font-size: 12px; line-height: 1.7; color: var(--text-mid); background: var(--white); }
+  .outlook-tip-body.open { display: block; }
+  .outlook-tip-body strong { color: var(--navy); }
+  .outlook-tip-body p { margin-bottom: 8px; }
+  .outlook-tip-body p:last-child { margin-bottom: 0; }
 
   .btn-copy { width: 100%; margin-top: 10px; padding: 12px 16px; background: var(--white); border: 1.5px solid var(--cream-dark); border-radius: 8px; font-family: 'DM Sans', sans-serif; font-size: 13px; color: var(--text-mid); cursor: pointer; transition: var(--transition); display: flex; align-items: center; justify-content: center; gap: 6px; }
   .btn-copy:hover { background: var(--cream); border-color: var(--navy-mid); }
@@ -200,24 +213,27 @@
       <div class="preview-box" id="previewBody"></div>
     </div>
 
-    <!--
-      THE KEY FIX:
-      This <a> tag starts with href="#". When the user clicks
-      "Preview", goToStep3() calls buildSendLink() which writes
-      the full mailto: URL directly into this element's href
-      attribute using setAttribute(). By the time the user sees
-      this button and taps it, the href is already fully set.
-      The tap is a plain anchor navigation — no JS runs on click.
-      This is the most reliable cross-browser, cross-device method.
-    -->
     <div class="send-link-wrap">
-      <a id="sendLink" href="#" class="send-link">
-        ✉&nbsp; Send via Outlook
-      </a>
-      <p class="send-link-note">
-        Opens Outlook with everything pre-filled. Tap Send in Outlook to file the report.<br>
-        If nothing happens, use <strong>Copy to clipboard</strong> below and paste into a new Outlook email.
-      </p>
+      <a id="sendLink" href="#" class="send-link">✉&nbsp; Send via Outlook</a>
+    </div>
+
+    <div class="outlook-tip">
+      <button class="outlook-tip-toggle" onclick="toggleTip(this)">
+        📱 Not opening in Outlook? Tap here for setup instructions
+        <span class="tip-arrow">▼</span>
+      </button>
+      <div class="outlook-tip-body">
+        <p><strong>iPhone / iPad</strong><br>
+        Settings → scroll down to <em>Outlook</em> → tap <em>Default Mail App</em> → select <em>Outlook</em>.</p>
+        <p><strong>Android</strong><br>
+        Settings → Apps → Default Apps → Email app → select <em>Outlook</em>.<br>
+        (Path may vary by phone model.)</p>
+        <p><strong>Mac</strong><br>
+        Open Outlook → Outlook menu → Settings → General → tick <em>Make Outlook the default application for email</em>.</p>
+        <p><strong>Windows</strong><br>
+        Open Outlook → File → Options → General → tick <em>Make Outlook the default program for email</em>.</p>
+        <p>Or use <strong>Copy to clipboard</strong> below and paste into a new Outlook email.</p>
+      </div>
     </div>
 
     <button class="btn-copy" onclick="copyToClipboard()">📋 Copy email to clipboard</button>
@@ -227,10 +243,11 @@
     </div>
   </div>
 
-</div><!-- /container -->
+</div>
 
 <script>
 var COMPLIANCE_EMAIL = "compliance@strategycorp.com";
+var COMM_TYPES = ['Meeting', 'Call', 'Email', 'Letter', 'Other'];
 
 var JURISDICTIONS = [
   {
@@ -284,7 +301,7 @@ var JURISDICTIONS = [
 
 var state = { jurisdiction: null, contactCount: 1 };
 
-// Init jurisdiction buttons
+// Init jurisdiction grid
 (function() {
   var grid = document.getElementById('jurisdictionGrid');
   JURISDICTIONS.forEach(function(j) {
@@ -300,6 +317,7 @@ var state = { jurisdiction: null, contactCount: 1 };
   });
 })();
 
+// ── Navigation ────────────────────────────────────────────────
 function goToStep1() { show('step1'); hide('step2'); hide('step3'); setStep(1); }
 
 function goToStep2() {
@@ -313,7 +331,7 @@ function goToStep2() {
 function goToStep3() {
   if (!validateStep2()) return;
   buildPreview();
-  buildSendLink();   // writes mailto: into the <a> href BEFORE step 3 is shown
+  buildSendLink();
   hide('step1'); hide('step2'); show('step3');
   setStep(3);
   window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -323,7 +341,7 @@ function setStep(n) {
   for (var i = 1; i <= 3; i++) {
     var d = document.getElementById('dot' + i);
     d.classList.remove('active','done');
-    if (i < n)  d.classList.add('done');
+    if (i < n)   d.classList.add('done');
     if (i === n) d.classList.add('active');
   }
   for (var i = 1; i <= 2; i++) {
@@ -331,17 +349,20 @@ function setStep(n) {
   }
 }
 
+// ── Step 2 render ─────────────────────────────────────────────
 function renderStep2() {
   var j = state.jurisdiction;
   document.getElementById('fieldsTitle').textContent = j.name + ' — Communication Details';
   var container = document.getElementById('dynamicFields');
   container.innerHTML = '';
-  var base = [
-    { id: 'date',     label: 'Date of Communication', type: 'date',   required: true },
-    { id: 'client',   label: 'Client',                type: 'text',   required: true, placeholder: 'Client name' },
-    { id: 'commtype', label: 'Communication Type',    type: 'select', required: true, options: ['Meeting','Call','Email','Letter','Other'] }
-  ];
-  base.concat(j.extraFields).forEach(function(f) { container.appendChild(makeField(f)); });
+
+  // Standard fields: date, client
+  container.appendChild(makeField({ id: 'date',   label: 'Date of Communication', type: 'date', required: true }));
+  container.appendChild(makeField({ id: 'client', label: 'Client', type: 'text',  required: true, placeholder: 'Client name' }));
+
+  // Jurisdiction-specific extra fields
+  j.extraFields.forEach(function(f) { container.appendChild(makeField(f)); });
+
   state.contactCount = 1;
   document.getElementById('countDisplay').textContent = '1';
   renderContacts();
@@ -350,7 +371,7 @@ function renderStep2() {
 function makeField(f) {
   var wrap = document.createElement('div');
   wrap.className = 'field';
-  wrap.innerHTML = '<label for="field_' + f.id + '">' + f.label + (f.required ? '<span class="required-star">*</span>' : '') + '</label>';
+  wrap.innerHTML = '<label class="field-label" for="field_' + f.id + '">' + f.label + (f.required ? '<span class="required-star">*</span>' : '') + '</label>';
   var input;
   if (f.type === 'textarea') {
     input = document.createElement('textarea');
@@ -374,6 +395,7 @@ function makeField(f) {
   return wrap;
 }
 
+// ── Contacts ──────────────────────────────────────────────────
 function adjustCount(delta) {
   state.contactCount = Math.max(1, Math.min(20, state.contactCount + delta));
   document.getElementById('countDisplay').textContent = state.contactCount;
@@ -384,22 +406,85 @@ function renderContacts() {
   var list = document.getElementById('contactsList');
   var isToronto = state.jurisdiction && state.jurisdiction.contactType === 'toronto';
   if (!list) return;
+
+  // Save existing values before wiping
+  var saved = [];
+  for (var s = 0; s < 20; s++) {
+    var nEl = document.getElementById('contact_name_'    + s);
+    if (!nEl) break;
+    var checked = {};
+    COMM_TYPES.forEach(function(t) {
+      var chip = document.getElementById('chip_' + s + '_' + t);
+      checked[t] = chip ? chip.classList.contains('checked') : false;
+    });
+    saved.push({
+      name:    nEl.value || '',
+      title:   (document.getElementById('contact_title_'   + s) || {}).value || '',
+      dept:    (document.getElementById('contact_dept_'    + s) || {}).value || '',
+      branch:  (document.getElementById('contact_branch_'  + s) || {}).value || '',
+      section: (document.getElementById('contact_section_' + s) || {}).value || '',
+      checked: checked
+    });
+  }
+
   list.innerHTML = '';
+
   for (var i = 0; i < state.contactCount; i++) {
+    var sv = saved[i] || { name:'', title:'', dept:'', branch:'', section:'', checked:{} };
     var card = document.createElement('div');
     card.className = 'contact-card';
-    card.innerHTML = '<div class="contact-num">' + (state.contactCount === 1 ? 'CONTACT' : 'CONTACT ' + (i+1)) + '</div>';
+    card.innerHTML = '<div class="contact-num">' + (state.contactCount === 1 ? 'CONTACT' : 'CONTACT ' + (i + 1)) + '</div>';
+
+    // Name + Title + optional Toronto fields
     var fields = document.createElement('div');
     fields.className = 'contact-fields';
-    fields.appendChild(mkInput('contact_name_'  + i, 'Full Name', true));
-    fields.appendChild(mkInput('contact_title_' + i, 'Title',     false));
+
+    var nf = mkInput('contact_name_'  + i, 'Full Name', true);
+    var tf = mkInput('contact_title_' + i, 'Title',     false);
+    nf.querySelector('input').value = sv.name;
+    tf.querySelector('input').value = sv.title;
+    fields.appendChild(nf);
+    fields.appendChild(tf);
+
     if (isToronto) {
-      var df = mkInput('contact_dept_'    + i, 'Department',        true);  df.classList.add('full');
-      var bf = mkInput('contact_branch_'  + i, 'Branch (optional)', false); bf.classList.add('full');
-      var sf = mkInput('contact_section_' + i, 'Section (optional)',false); sf.classList.add('full');
+      var df = mkInput('contact_dept_'    + i, 'Department',        true);
+      var bf = mkInput('contact_branch_'  + i, 'Branch (optional)', false);
+      var sf = mkInput('contact_section_' + i, 'Section (optional)',false);
+      df.querySelector('input').value = sv.dept;
+      bf.querySelector('input').value = sv.branch;
+      sf.querySelector('input').value = sv.section;
+      df.classList.add('full'); bf.classList.add('full'); sf.classList.add('full');
       fields.appendChild(df); fields.appendChild(bf); fields.appendChild(sf);
     }
+
     card.appendChild(fields);
+
+    // Comm type pills — always shown on every contact
+    var commRow = document.createElement('div');
+    commRow.className = 'comm-type-row';
+    commRow.innerHTML = '<span class="comm-type-row-label">Communication type(s) with this contact<span class="required-star">*</span></span>';
+
+    var chipGroup = document.createElement('div');
+    chipGroup.className = 'chip-group';
+
+    COMM_TYPES.forEach(function(type) {
+      var chipId = 'chip_' + i + '_' + type;
+      var wasChecked = sv.checked[type] || false;
+      var chip = document.createElement('label');
+      chip.className = 'comm-chip' + (wasChecked ? ' checked' : '');
+      chip.id = chipId;
+      chip.innerHTML =
+        '<input type="checkbox"' + (wasChecked ? ' checked' : '') + '>' +
+        '<span class="chip-dot"></span>' +
+        type;
+      chip.querySelector('input').addEventListener('change', function() {
+        chip.classList.toggle('checked', this.checked);
+      });
+      chipGroup.appendChild(chip);
+    });
+
+    commRow.appendChild(chipGroup);
+    card.appendChild(commRow);
     list.appendChild(card);
   }
 }
@@ -407,7 +492,7 @@ function renderContacts() {
 function mkInput(id, label, required) {
   var wrap = document.createElement('div');
   wrap.className = 'field';
-  wrap.innerHTML = '<label for="' + id + '">' + label + (required ? '<span class="required-star">*</span>' : '') + '</label>';
+  wrap.innerHTML = '<label class="field-label" for="' + id + '">' + label + (required ? '<span class="required-star">*</span>' : '') + '</label>';
   var input = document.createElement('input');
   input.type = 'text'; input.id = id;
   if (required) input.required = true;
@@ -415,7 +500,18 @@ function mkInput(id, label, required) {
   return wrap;
 }
 
+// ── Validation ────────────────────────────────────────────────
+function getContactCommTypes(i) {
+  var types = [];
+  COMM_TYPES.forEach(function(t) {
+    var chip = document.getElementById('chip_' + i + '_' + t);
+    if (chip && chip.classList.contains('checked')) types.push(t);
+  });
+  return types;
+}
+
 function validateStep2() {
+  // Required text/select fields
   var required = document.querySelectorAll('#step2 [required]');
   for (var i = 0; i < required.length; i++) {
     if (!required[i].value.trim()) {
@@ -426,9 +522,19 @@ function validateStep2() {
       return false;
     }
   }
+  // Each contact must have at least one comm type selected
+  for (var c = 0; c < state.contactCount; c++) {
+    if (getContactCommTypes(c).length === 0) {
+      var label = state.contactCount === 1 ? 'the contact' : 'Contact ' + (c + 1);
+      showToast('Please select at least one comm type for ' + label);
+      document.getElementById('chip_' + c + '_Meeting').scrollIntoView({ behavior: 'smooth', block: 'center' });
+      return false;
+    }
+  }
   return true;
 }
 
+// ── Email content ─────────────────────────────────────────────
 function getVal(id) {
   var el = document.getElementById('field_' + id);
   return el ? el.value.trim() : '';
@@ -438,7 +544,6 @@ function buildEmailContent() {
   var j         = state.jurisdiction;
   var date      = getVal('date');
   var client    = getVal('client');
-  var commtype  = getVal('commtype');
   var isToronto = j.contactType === 'toronto';
 
   var dateDisplay = date;
@@ -462,10 +567,10 @@ function buildEmailContent() {
   lines.push(THICK);
   lines.push('');
 
+  // Standard fields
   var stdFields = [
-    { label: 'Date',               value: dateDisplay },
-    { label: 'Client',             value: client },
-    { label: 'Communication Type', value: commtype }
+    { label: 'Date',   value: dateDisplay },
+    { label: 'Client', value: client }
   ];
   j.extraFields.forEach(function(f) {
     var val = getVal(f.id);
@@ -475,6 +580,7 @@ function buildEmailContent() {
     lines.push(f.label.toUpperCase()); lines.push(THIN); lines.push(f.value || '—'); lines.push('');
   });
 
+  // Contacts
   var plural = state.contactCount === 1 ? 'PERSON' : 'PEOPLE';
   lines.push(THICK);
   lines.push('CONTACTS (' + state.contactCount + ' ' + plural + ')');
@@ -487,11 +593,15 @@ function buildEmailContent() {
     var deptEl    = document.getElementById('contact_dept_'    + i);
     var branchEl  = document.getElementById('contact_branch_'  + i);
     var sectionEl = document.getElementById('contact_section_' + i);
+    var commTypes = getContactCommTypes(i);
     var num = state.contactCount === 1 ? '' : ' ' + (i + 1);
+
     lines.push('CONTACT' + num);
     lines.push(THIN);
     lines.push('Name:       ' + (nameEl  && nameEl.value.trim()  ? nameEl.value.trim()  : '—'));
     lines.push('Title:      ' + (titleEl && titleEl.value.trim() ? titleEl.value.trim() : '—'));
+    lines.push('Comm types: ' + (commTypes.length > 0 ? commTypes.join(', ') : '—'));
+
     if (isToronto) {
       if (deptEl    && deptEl.value.trim())    lines.push('Department: ' + deptEl.value.trim());
       if (branchEl  && branchEl.value.trim())  lines.push('Branch:     ' + branchEl.value.trim());
@@ -508,6 +618,7 @@ function buildEmailContent() {
   return { subject: subject, body: lines.join('\n') };
 }
 
+// ── Preview & send ────────────────────────────────────────────
 function buildPreview() {
   var c = buildEmailContent();
   document.getElementById('previewTo').textContent      = 'To: ' + COMPLIANCE_EMAIL;
@@ -515,10 +626,6 @@ function buildPreview() {
   document.getElementById('previewBody').textContent    = c.body;
 }
 
-// Write the mailto: URL directly into the anchor's href attribute.
-// This runs BEFORE step 3 is revealed, so by the time the user
-// sees and taps the button, it is a plain static link.
-// No JavaScript runs at tap time — Safari/Mac/iOS all handle this reliably.
 function buildSendLink() {
   var c = buildEmailContent();
   var url = 'mailto:' + encodeURIComponent(COMPLIANCE_EMAIL)
@@ -527,6 +634,13 @@ function buildSendLink() {
   document.getElementById('sendLink').setAttribute('href', url);
 }
 
+// ── Outlook tip ───────────────────────────────────────────────
+function toggleTip(btn) {
+  btn.classList.toggle('open');
+  btn.nextElementSibling.classList.toggle('open');
+}
+
+// ── Copy ──────────────────────────────────────────────────────
 function copyToClipboard() {
   var c    = buildEmailContent();
   var full = 'To: ' + COMPLIANCE_EMAIL + '\nSubject: ' + c.subject + '\n\n' + c.body;
@@ -534,9 +648,7 @@ function copyToClipboard() {
     navigator.clipboard.writeText(full).then(function() {
       showToast('Copied to clipboard ✓');
     }).catch(function() { fallbackCopy(full); });
-  } else {
-    fallbackCopy(full);
-  }
+  } else { fallbackCopy(full); }
 }
 
 function fallbackCopy(text) {
@@ -548,6 +660,7 @@ function fallbackCopy(text) {
   document.body.removeChild(ta);
 }
 
+// ── Toast ─────────────────────────────────────────────────────
 function showToast(msg) {
   var t = document.getElementById('toast');
   t.textContent = msg; t.classList.add('show');
