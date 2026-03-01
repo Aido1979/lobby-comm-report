@@ -296,9 +296,7 @@ var JURISDICTIONS = [
     contactType: "toronto",
     extraFields: [
     ],
-    contactPills: [
-      { id: "meeting_request", label: "Was this communication to request a meeting for the client?", options: ["Yes","No","N/A"] }
-    ]
+    contactHasMeetingRequest: true
   },
   {
     id: "sk", name: "Saskatchewan", flag: "🌾",
@@ -453,6 +451,10 @@ function renderContacts() {
         var el = document.getElementById('targets_toggle_' + s);
         return el ? el.dataset.active === 'true' : false;
       })(),
+      meetingRequest: (function() {
+        var el = document.getElementById('meeting_toggle_' + s);
+        return el ? el.dataset.active === 'true' : false;
+      })(),
       pillValues: (function() {
         var pv = {};
         var cp = state.jurisdiction ? (state.jurisdiction.contactPills || []) : [];
@@ -583,6 +585,25 @@ function renderContacts() {
         toggle.querySelector('.toggle-text').textContent = currently ? 'Add to targets list' : 'Added to targets list';
       });
       card.appendChild(toggle);
+    }
+
+    // Meeting request toggle — Toronto only
+    if (state.jurisdiction.contactHasMeetingRequest) {
+      var isMtg = sv.meetingRequest || false;
+      var mtgToggle = document.createElement('button');
+      mtgToggle.type = 'button';
+      mtgToggle.className = 'targets-toggle' + (isMtg ? ' active' : '');
+      mtgToggle.id = 'meeting_toggle_' + i;
+      mtgToggle.dataset.active = isMtg ? 'true' : 'false';
+      mtgToggle.innerHTML = '<span class="toggle-icon">' + (isMtg ? '✓' : '+') + '</span><span class="toggle-text">' + (isMtg ? 'Communication was a meeting request' : 'Mark as meeting request') + '</span>';
+      mtgToggle.addEventListener('click', function() {
+        var currently = mtgToggle.dataset.active === 'true';
+        mtgToggle.dataset.active = currently ? 'false' : 'true';
+        mtgToggle.classList.toggle('active', !currently);
+        mtgToggle.querySelector('.toggle-icon').textContent = currently ? '+' : '✓';
+        mtgToggle.querySelector('.toggle-text').textContent = currently ? 'Mark as meeting request' : 'Communication was a meeting request';
+      });
+      card.appendChild(mtgToggle);
     }
 
     list.appendChild(card);
